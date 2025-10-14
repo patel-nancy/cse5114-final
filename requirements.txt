@@ -1,0 +1,6 @@
+streamlit
+kafka-python-ng
+pandas
+python-dateutil
+requests
+websockets
