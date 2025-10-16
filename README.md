@@ -1,12 +1,10 @@
 # CSE5114 Final Project
 
-This project contains cryptocurrency data collection and streaming tools using WebSocket connections and Kafka for data processing.
+This is our cryptocurrency arbitrage bot. It looks for real-time price differences in cryptocurrencies (e.g. Bitcoin) across the platforms Coinbase and Kraken. 
 
 ## Files
 
-- `api-test.py` - REST API data fetching from Coinbase and Kraken exchanges
 - `websocket-async-test.py` - Asynchronous WebSocket streaming with Kafka integration
-- `websocket-threaded-test.py` - Threaded WebSocket streaming implementation
 
 ## Installation
 
@@ -37,33 +35,19 @@ This project contains cryptocurrency data collection and streaming tools using W
    pip install streamlit kafka-python-ng pandas python-dateutil requests websockets
    ```
 
-4. **Start Kafka (if using WebSocket streaming):**
+4. **Start Kafka (if using Websockets):**
    ```bash
    # Using Docker (recommended)
    docker run -p 9092:9092 apache/kafka:latest
-   
-   # Or follow Kafka quickstart guide for local installation
    ```
 
 ## Usage
-
-### API Testing
-```bash
-python api-test.py
-```
-Fetches current Bitcoin price data from Coinbase and Kraken exchanges.
 
 ### WebSocket Streaming (Async)
 ```bash
 python websocket-async-test.py
 ```
 Streams real-time Bitcoin ticker data from both exchanges and sends to Kafka topics.
-
-### WebSocket Streaming (Threaded)
-```bash
-python websocket-threaded-test.py
-```
-Alternative threaded implementation for WebSocket streaming.
 
 ## Dependencies
 
@@ -78,4 +62,3 @@ Alternative threaded implementation for WebSocket streaming.
 
 - Make sure Kafka is running on `localhost:9092` before running the WebSocket streaming scripts
 - The WebSocket scripts will create Kafka topics: `coinbase-btc-usd` and `kraken-btc-usd`
-- All scripts include error handling and will print connection status and data
