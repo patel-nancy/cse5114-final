@@ -10,7 +10,7 @@ This is our cryptocurrency arbitrage bot. It looks for real-time price differenc
 
 ### Prerequisites
 
-1. **Python 3.7+** - Make sure you have Python installed on your system
+1. **Python 3.9.21** 
 2. **Apache Kafka** - Required for the WebSocket streaming applications
    - Download from: https://kafka.apache.org/quickstart
    - Or use Docker: `docker run -p 9092:9092 apache/kafka:latest`
@@ -22,7 +22,7 @@ This is our cryptocurrency arbitrage bot. It looks for real-time price differenc
 2. **Create a virtual environment (recommended):**
    ```bash
    python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   source .venv/bin/activate  # On Windows: venv\Scripts\activate
    ```
 
 3. **Install dependencies:**

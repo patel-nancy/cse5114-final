@@ -1,7 +1,7 @@
 ﻿import asyncio #using asyncio instead of threading bc asyncio is more efficient for I/O tasks (which listening to websockets are)
-import datetime
 import json
 import websockets #pip install websockets
+from datetime import datetime, timezone
 from kafka import KafkaProducer #pip install kafka-python-ng
 
 #set up kafka: https://kafka.apache.org/quickstart (download, then run JVM docker image)
@@ -43,11 +43,11 @@ async def coinbase_ws():
                         'price': data.get('price'),  # current market price
                         'bid': data.get('bid'),  # highest price someone willing to pay
                         'ask': data.get('ask'),  # lowest price someone willing to sell
-                        'timestamp': datetime.datetime.now(datetime.UTC).isoformat()
+                        'timestamp': datetime.now(timezone.utc)
                     }
                     print(filtered_data)
 
-                    producer.send('coinbase-btc-usd', filtered_data)
+                    # producer.send('coinbase-btc-usd', filtered_data)
 
             except Exception as e:
                 print(e)
@@ -102,7 +102,7 @@ async def kraken_ws():
                         'price': data.get('last'),
                         'bid': data.get('bid'),
                         'ask': data.get('ask'),
-                        'timestamp': datetime.datetime.now(datetime.UTC).isoformat()
+                        'timestamp': datetime.now(timezone.utc)
                     }
                     print(filtered_data)
 
