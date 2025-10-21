@@ -11,10 +11,10 @@ spark = (SparkSession.builder
 currency_schema = StructType([
     StructField('exchange', StringType(), True),
     StructField('symbol', StringType(), True),
-    StructField("price", DoubleType(), True),
-    StructField("bid", DoubleType(), True),
-    StructField("ask", DoubleType(), True),
-    StructField("timestamp", TimestampType(), True),
+    StructField('price', DoubleType(), True),
+    StructField('bid', DoubleType(), True),
+    StructField('ask', DoubleType(), True),
+    StructField('timestamp', TimestampType(), True),
 ])
 
 #https://spark.apache.org/docs/latest/streaming/structured-streaming-kafka-integration.html
@@ -38,5 +38,33 @@ coinbase_df = spark.readStream \
     ) \
     .select("data.*") #json -> table
 
-query = coinbase_df.writeStream.format("console").start()
+kraken_df = spark.readStream \
+    .format("kafka") \
+    .option("kafka.bootstrap.servers", "localhost:9092") \
+    .option('subscribe', 'kraken-btc-usd') \
+    .load() \
+    .select(
+        #binary -> string
+        F.col("value").cast("string").alias("string")
+    ) \
+    .select(
+        #string -> json
+        F.from_json(
+            F.col("string"),
+            currency_schema
+        ).alias("data")
+    ) \
+    .select("data.*") #json -> table
+
+# Watermarks: https://www.databricks.com/blog/feature-deep-dive-watermarking-apache-spark-structured-streaming 
+# used to join streams that arrive in the same time interval
+coinbase_stream = coinbase_df.withWatermark("timestamp", "10 seconds").alias("coinbase")
+kraken_stream = kraken_df.withWatermark("timestamp", "10 seconds").alias("kraken")
+
+joined_stream = coinbase_stream.join(
+    kraken_stream, 
+    F.col("coinbase.symbol") == F.col("kraken.symbol")
+)
+
+query = joined_stream.writeStream.format("console").start()
 query.awaitTermination()

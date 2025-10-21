@@ -10,6 +10,12 @@ producer = KafkaProducer(
     value_serializer=lambda m: json.dumps(m).encode(),
 )
 
+# str -> float (or None)
+def to_float(value, default=None):
+    if value is None:
+        return default
+    return float(value)
+
 async def coinbase_ws():
     url = "wss://ws-feed.exchange.coinbase.com"
     async with websockets.connect(url) as ws:
@@ -39,15 +45,17 @@ async def coinbase_ws():
                 if data.get('type') == 'ticker':
                     filtered_data = {
                         'exchange': 'coinbase',
-                        'symbol': data.get('product_id'), #BTC-USD
-                        'price': data.get('price'),  # current market price
-                        'bid': data.get('bid'),  # highest price someone willing to pay
-                        'ask': data.get('ask'),  # lowest price someone willing to sell
-                        'timestamp': datetime.now(timezone.utc)
+                        'symbol': data.get('product_id'), 
+
+                        'price': to_float(data.get('price')),  # current market price
+                        'bid': to_float(data.get('bid')),  # highest price someone willing to pay
+                        'ask': to_float(data.get('ask')),  # lowest price someone willing to sell
+
+                        'timestamp': datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
                     }
                     print(filtered_data)
 
-                    # producer.send('coinbase-btc-usd', filtered_data)
+                    producer.send('coinbase-btc-usd', filtered_data)
 
             except Exception as e:
                 print(e)
@@ -98,11 +106,14 @@ async def kraken_ws():
                     data = data.get('data')[0]
                     filtered_data = {
                         'exchange': 'kraken',
-                        'symbol': data.get('symbol'),
+                        'symbol': 'BTC-USD',
+                        # 'symbol': data.get('symbol'),
+
                         'price': data.get('last'),
                         'bid': data.get('bid'),
                         'ask': data.get('ask'),
-                        'timestamp': datetime.now(timezone.utc)
+                        
+                        'timestamp': datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ') #ISO 8601 timestamp 
                     }
                     print(filtered_data)
 
