@@ -48,8 +48,8 @@ async def coinbase_ws():
                         'symbol': data.get('product_id'), 
 
                         'price': to_float(data.get('price')),  # current market price
-                        'bid': to_float(data.get('bid')),  # highest price someone willing to pay
-                        'ask': to_float(data.get('ask')),  # lowest price someone willing to sell
+                        'bid': to_float(data.get('best_bid')),  # highest price someone willing to pay
+                        'ask': to_float(data.get('best_ask')),  # lowest price someone willing to sell
 
                         'timestamp': datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
                     }

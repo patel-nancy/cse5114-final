@@ -10,7 +10,7 @@ This is our cryptocurrency arbitrage bot. It looks for real-time price differenc
 
 ### Prerequisites
 
-1. **Python 3.9.21** 
+1. **Python 3.11.14 / Java Version 17.0.16**
 2. **Apache Kafka** - Required for the WebSocket streaming applications
    - Download from: https://kafka.apache.org/quickstart
    - Or use Docker: `docker run -p 9092:9092 apache/kafka:latest`
@@ -21,7 +21,7 @@ This is our cryptocurrency arbitrage bot. It looks for real-time price differenc
 
 2. **Create a virtual environment (recommended):**
    ```bash
-   python -m venv venv
+   python3.11 -m venv venv
    source .venv/bin/activate  # On Windows: venv\Scripts\activate
    ```
 
@@ -35,7 +35,10 @@ This is our cryptocurrency arbitrage bot. It looks for real-time price differenc
    pip install streamlit kafka-python-ng pandas python-dateutil requests websockets
    ```
 
-4. **Start Kafka (if using Websockets):**
+4. **Install Flink Jar Files**
+   Take the Jar file from the ```jar``` directory and copy them into ```venv/lib/pyflink/pyflink/lib/```. You can do so by running ```cp -v jars/*.jar venv/lib/python3.11/site-packages/pyflink/lib/```.
+
+5. **Start Kafka (if using Websockets):**
    ```bash
    # Using Docker (recommended)
    docker run -p 9092:9092 apache/kafka:latest
@@ -46,6 +49,8 @@ This is our cryptocurrency arbitrage bot. It looks for real-time price differenc
 ### WebSocket Streaming (Async)
 ```bash
 python websocket-async-test.py
+python flink.py
+
 ```
 Streams real-time Bitcoin ticker data from both exchanges and sends to Kafka topics.
 
@@ -57,6 +62,7 @@ Streams real-time Bitcoin ticker data from both exchanges and sends to Kafka top
 - **python-dateutil** - Date/time utilities
 - **requests** - HTTP library for API calls
 - **websockets** - WebSocket client library
+- **pyflink** - Python Apache Flink
 
 ## Notes
 
